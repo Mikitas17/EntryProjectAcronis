@@ -7,6 +7,8 @@ class TestMerge(TestCase):
 
     test_list1 = [1, 6, 10, 11]
     test_list2 = [1, 5, 9]
+    test_tuple1 = (1, 6, 10, 11)
+    test_tuple2 = (1, 5, 9)
     expected_list = [1, 1, 5, 6, 9, 10, 11]
     not_iter = None
     diff_range1 = 3
@@ -15,11 +17,15 @@ class TestMerge(TestCase):
     dict_to_test = {1: 6, 5: 10}
 
     def test_check_merge_accepts_iterators(self):
-        self.assertEqual((list(merge(self.test_list1, self.test_list2))), self.expected_list,
-                         f"Merge did not accepted Iterators.")
+        param_list = [(self.test_list1, self.test_list2, ),
+                      (self.test_tuple1, self.test_tuple2, )]
+        for param1, param2 in param_list:
+            with self.subTest():
+                self.assertEqual((list(merge(param1, param2))), self.expected_list,
+                                 f"Function merge() did not accepted Iterators.")
 
     def test_check_merge_returns_generator(self):
-        self.assertIsInstance(merge(self.test_list1), Generator, "Returned object is not a generator")
+        self.assertIsInstance(merge(self.test_list1), Generator, "Function merge() returned not generator")
 
     def test_check_func_accepts_generators(self):
         gen_for_test = (arg for arg in self.test_list1)
@@ -28,7 +34,7 @@ class TestMerge(TestCase):
     def test_merge_result_sorted(self):
         self.assertEqual(list(merge(self.test_list1, self.test_list2)),
                          sorted(self.test_list1+self.test_list2),
-                         f"Merge result was not sorted")
+                         f"Merged result was not sorted")
 
     def test_merge_accepts_iterators_of_diff_len(self):
         self.assertEqual(len(list(merge(range(self.diff_range1), range(self.diff_range2)))),
